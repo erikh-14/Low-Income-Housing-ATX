@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Register Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script type="text/javascript" src="registerpagerequest.js"></script>
+  <link rel="stylesheet" type="text/css" href="login.css">
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-xl-9 mx-auto">
+        <div class="card card-signin flex-row my-5">
+          <div class="card-body">
+            <h5 class="card-title text-center">Create An Account</h5>
+            <form class="form-signin" name="myForm">
+              <div class="form-label-group">
+
+                <hr>
+                <h1 class="card-title mb-0 text-danger" id="errorUsername"></h1>
+                <div class="form-label-group">
+                  <input type="text" id="inputUsername" name="user" class="form-control" placeholder="Username" required
+                    autofocus>
+                  <label for="inputUsername">Username</label>
+                </div>
+                <hr>
+
+                <h1 class="card-title mb-0 text-danger" id="errorPassword"></h1>
+                <div class="form-label-group">
+                  <input type="password" id="inputPassword" name="pass" class="form-control"
+                    placeholder="Password (Password Must Be At least 6 characters)" required>
+                  <label for="inputPassword">Password</label>
+                </div>
+
+                <div class="form-label-group">
+                  <input type="password" id="inputConfirmPassword" name="vpass" class="form-control"
+                    placeholder="Confirm Password (Password Must Be At least 6 characters)" required>
+                  <label for="inputConfirmPassword">Confirm password</label>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="text" id="accesscode" name="access" class="form-control" placeholder="Access-code" required>
+                    <label for="accesscode">Access code</label>
+                  </div>
+
+                <button class="btn btn-lg btn-primary btn-block text-uppercase" name="submitButton" type="button"
+                  onclick="validateForm()">Register</button>
+                <hr class="my-4">
+
+                <button class="btn btn-lg btn-signin btn-block text-uppercase" type="button"
+                  onclick="window.location.href = 'http://67.205.136.114/admin.html';"><i
+                    class="fab fa-google mr-2"></i> Already Have Account? Sign In</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+
+
+  function enterKey(e) {
+    if (event.key === "Enter") {
+      validateForm();
+    }
+  }
+
+
+  // Testing for Password Validation Good and Bad
+  // check_Password("thisisatest")
+  // check_Password("Thisisatest")
+  // check_Password("test")
+  // check_Password("Password1")
+
+  //[a-zA-Z0-9]\w{7,14}
+
+  function check_Password(pass) {
+    var passRegex = /^[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]{6,}$/;
+    if (passRegex.test(pass)) {
+      console.log(pass)
+      console.log("Good Pass")
+      document.getElementById("errorPassword").innerHTML = "";
+      return true;
+    }
+    else {
+      console.log(pass)
+      console.log("Bad Pass")
+      //alert('Invalid Password: Password Must Be Atlease 6 characters. Spaces not allowed)
+      document.getElementById("errorPassword").innerHTML = "**Password Must Be At least 6 characters**";
+      return false;
+    }
+
+  }
+
+
+  // check_Username testing for Good and Bad Usernames
+  // check_Username("h1k2n53k443")
+  // check_Username("h1k 2n 53 k4 43")
+  //check_Username("Erik123")
+
+
+  function check_Username(username) {
+
+    var usernameRegex = /^[a-zA-Z0-9]\w{5,30}$/;
+    if (usernameRegex.test(username)) {
+      console.log(username);
+      console.log("Username is valid");
+      document.getElementById("errorUsername").innerHTML = "";
+      return true;
+    }
+    else {
+      //alert("Username Is Invalid, A Username Should Only Contain Letters a-z/A-Z and Numbers and should be 5 or longer characters");
+      console.log(username);
+      console.log("Invalid Username");
+      document.getElementById("errorUsername").innerHTML = "* Username Should Only Contain Letters a-z/A-Z and Numbers and Should be 5 or Longer Characters *";
+
+      return false;
+    }
+
+  }
+
+  function validateForm() {
+
+    var isValid = true;
+
+    var pass = document.forms["myForm"]["pass"].value
+    var checkpass = document.forms["myForm"]["vpass"].value
+    var name = document.forms["myForm"]["user"].value
+    var accesscode = document.forms["myForm"]["access"].value
+
+    if (pass == "" || name == "" || checkpass == "" || accesscode == "") {
+      alert("ERROR: Please fill in all fields for registration");
+      return false;
+    }
+
+    console.log(check_Username(name) + check_Password(pass));
+
+    if (check_Username(name) + check_Password(pass) != 2) {
+      return false;
+    }
+
+    if (pass != checkpass) {
+      alert("Error: Passwords do not match");
+      return false;
+    }
+
+    var register_dictionary = {
+      "username": name,
+      "password": pass,
+      "accesscode" : accesscode
+    };
+
+    send_admin_register(register_dictionary);
+    console.log("registerJS");
+    return false;
+
+  }
+</script>
+
+</html>

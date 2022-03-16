@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<!-- Sets the Source for the Javascript to run in the HTML file -->
+
+<html>
+<!-- References the Stylesheet for the CSS on the Login Page -->
+<script type="text/javascript" src="utilities.js"></script>
+<link rel="stylesheet" type="text/css" href="ziplocatorstyle.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+
+<p id="welcome">Welcome!</p>
+
+<script>
+    var fullName = checkCookie("username");
+    console.log(fullName);
+    document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+</script>
+<script>
+    var fullName = get_cookie("username");
+    console.log(fullName);
+    document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+</script>
+
+
+<body>
+  <title> Locate Property </title>
+  <!--<p id="welcome">Welcome!</p> -->
+  <center>
+    <h1>Locate Property</h1>
+  </center>
+  <button class="example_b" type="button" onclick="window.location.href = 'http://67.205.136.114/maindash.html';">Back
+    to Dashboard</button>
+  <!-- Button Allows the Logout to end the Session and Return to the login page -->
+  <button class="example_c" type="button"
+    onclick="window.location.href = 'http://67.205.136.114/index.html';">Logout</button>
+
+  <br></br>
+
+  <br></br>
+  <div class="container">
+    <div class = "row">
+      <div class="col-lg-10 col-xl-9 mx-auto">
+        <div class="card card-signin flex-row my-5">
+          <div class="card-body">
+            <h5 class="card-title text-center">Please select from the following options</h5>
+
+      <form class ="form-signin" name="myForm">
+        <div class="form-label-group">
+          <center>
+        <label for="zCode"><span>Zip Code</span></label>
+        <select id="zCode" name="zip">
+          <option value="78617">78617</option>
+          <option value="78652">78652</option>
+          <option value="78701">78701</option>
+          <option value="78702">78702</option>
+          <option value="78703">78703</option>
+          <option value="78704">78704</option>
+          <option value="78705">78705</option>
+          <option value="78717">78717</option>
+          <option value="78721">78721</option>
+          <option value="78722">78722</option>
+          <option value="78723">78723</option>
+          <option value="78724">78724</option>
+          <option value="78727">78727</option>
+          <option value="78730">78730</option>
+          <option value="78735">78735</option>
+          <option value="78741">78741</option>
+          <option value="78745">78745</option>
+          <option value="78747">78747</option>
+          <option value="78748">78748</option>
+          <option value="78749">78749</option>
+          <option value="78750">78750</option>
+          <option value="78751">78751</option>
+          <option value="78752">78752</option>
+          <option value="78753">78753</option>
+          <option value="78754">78754</option>
+          <option value="78756">78756</option>
+          <option value="78757">78757</option>
+          <option value="78758">78758</option>
+          <option value="78759">78759</option>
+
+        </select>
+        <br>
+        <hr>
+        <br>
+        <label for="hNumber"><span>Household Number</span></label>
+        <select id="hNumber" name="numOfHH">
+          <option value="1 Person Household">1</option>
+          <option value="2 Person Household">2</option>
+          <option value="3 Person Household">3</option>
+          <option value="4 Person Household">4</option>
+          <option value="5 Person Household">5</option>
+        </select>
+        <br>
+        <hr>
+        <br>
+        <label for="hType"><span>Housing Type</span></label>
+        <select id="hType" name="housingType">
+          <option value="Residential Housing">Residential</option>
+          <option value="Transitional Housing">Transitional</option>
+          <option value="Senior Housing">Senior</option>
+          <option value="Accessible Housing">Accessible</option>
+          <option value="Student Housing">Student</option>
+        </select>
+        <br>
+        <hr>
+        <br>
+
+        <label for="hhIncome">Household Income</label>
+        <input type="text" id="hhIncome" name="hHI" placeholder="Your annual income">
+
+
+        <br>
+        <hr>
+        <br></br>
+        <button class="example_b" type="button" onclick="validateForm()">Search Housing</button>
+
+      </center>
+      </form>
+
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  <style>
+        input {
+          text-align: center;
+        }
+        ::-webkit-input-placeholder {
+        text-align: center;
+      }
+      :-moz-placeholder {
+        text-align: center;
+      }
+  </style>
+
+  <script>
+    function validateForm() {
+      var zip = parseInt(document.forms["myForm"]["zip"].value);
+
+      if (zip == "") {
+        alert("zip must be filled out");
+        return false;
+      }
+
+      var numOfHH = document.forms["myForm"]["numOfHH"].value;
+
+      if (numOfHH == "") {
+        alert("number of household type must be filled out");
+        return false;
+      }
+
+      var housingType = document.forms["myForm"]["housingType"].value;
+
+      if (housingType == "") {
+        alert("housing type must be filled out");
+        return false;
+      }
+
+      var hHI = document.forms["myForm"]["hHI"].value;
+
+      if (hHI == "") {
+        alert("household income must be filled out");
+        return false;
+      } else {
+        var hHIInt = parseInt(hHI);
+        if (hHIInt < 0) {
+          alert("no negative income")
+          return false;
+        }
+      }
+
+
+
+      var housingDictionary = {
+        "zip": zip,
+        "numOfHH": numOfHH,
+        "housingType": housingType,
+        "hHI": hHIInt
+
+      };
+      send_property(housingDictionary);
+      return false;
+
+    }
+
+
+  </script>
+
+  <script>
+    function send_property(housingDictionary) {
+
+      var url = '/api/list';
+
+      var jsonObject = JSON.stringify(housingDictionary)
+
+      console.log(jsonObject);
+
+      //making a bridge to the web server
+      var request = new XMLHttpRequest();
+      //initializing request to the web server
+      request.open('POST', url, true);
+      //Setting the header of the API request
+      request.setRequestHeader("Content-type", "application/json");
+
+      //do something with the data being processed
+
+      request.onload = function () {
+        console.log("request.onload is called!");
+
+        // Good response
+        if (request.status >= 200 && request.status < 400) {
+          console.log("Request is sent!");
+          console.log("Response: " + request.response);
+          console.log(request.statusText);
+          if(request.response != ""){
+            sessionStorage.setItem("response",request.response);
+            alert("Housing data " + housingDictionary['zip'] + " successful");
+            location.replace("http://67.205.136.114/response.html");
+          }else {
+            alert("Nothing was matched based on your input. Please change the zip code or housing Type");
+          }
+
+        }
+
+        else {
+          //Error handling
+          const errorMessage = document.createElement('error');
+          errorMessage.textContent = "Connection Error!";
+          alert(request.status + " FAILED: Housing data" + housingDictionary['zip'] + " failed (" + request.response + ")");
+          console.log(request.status);
+        }
+      }
+
+      //request get sent out
+      request.send(jsonObject);
+    }
+
+  </script>
+
+</body>
+
+</html>

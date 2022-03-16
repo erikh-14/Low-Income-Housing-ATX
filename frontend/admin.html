@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+
+
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="login.css">
+    <script type="text/javascript" src="utilities.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script type="text/javascript" src="loginpagerequest.js"></script>
+
+    <style>
+.footer {
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: black;
+   color: white;
+   text-align: center;
+}
+</style>
+  </head>
+
+    <body>
+      <center>
+
+      <h1>Affordable Housing ATX (AHATX)</h1>
+      <h2>Senior Project</h2>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+              <div class="card-body">
+                <h5 class="card-title text-center">Admin Login Page</h5>
+
+                <form class = "form-signin"  name="loginForm">
+                  <div class="form-label-group">
+                    <input type="username" id="inputUsername" name = "user" class="form-control" placeholder="Username" required autofocus onkeydown="enterKey(this)">
+                    <label for="inputUsername">Username</label>
+                  </div>
+
+                  <div class="form-label-group">
+                    <input type="password" id = "inputPassword" name = "pass" class="form-control" placeholder="Password" required onkeydown="enterKey(this)">
+                    <label for="inputPassword">Password</label>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mb-3">
+                    <input type="checkbox" class="custom-control-input" id="customCheck1">
+                    <label class="custom-control-label" for="customCheck1">Remember password</label>
+                  </div>
+                  <button class="btn btn-lg btn-primary btn-block text-uppercase" name = "submitButton" type="button" onclick="validateForm()">Sign in</button>
+
+                    <button class="btn btn-lg btn-primary btn-block text-uppercase" onclick="window.location.href = 'http://67.205.136.114/adminRegister.html';">Register</button>
+
+                  <hr class="my-4">
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+          <div class="footer">
+            <p>St. Edward's University Senior Project by Phillip Yang & Erik Hernandez</p>
+        <!-- <p>Do I qualify for income-restricted housing?
+
+  Home seekers must meet specific household income requirements to qualify to rent or purchase an
+  income-restricted affordable unit. Most funding and incentive programs in Austin require that a households gross annual
+  income is no more than 80 percent of the median family income.</p> -->
+      </div>
+    </center>
+
+    </body>
+    <script>
+                console.log ("Href: " + document.location.href);
+                console.log ("pathname: " + document.location.pathname);
+                console.log ("document.location: " + document.location);
+                // Allow form inputs to submit on enter key.
+                function enterKey(e) {
+                    if (event.key === "Enter") {
+                        validateForm();
+                    }
+                }
+
+                // Check if form inputs are valid.
+                function validateForm() {
+
+                    // Check username
+                    var name = document.forms["loginForm"]["user"].value;
+
+                    if (name == "") {
+                        alert("Name must be filled out!");
+                        return false;
+                    }
+
+                    // Check Password
+                    var pass = document.forms["loginForm"]["pass"].value;
+
+                    if (pass == "") {
+                        alert("Password must be filled out!");
+                        return false;
+                    }
+
+                    // Store username and password inside a dictionary
+                    var login_dictionary = {"username": name, "password":pass};
+
+                    // Send username and password to the backend to check against values in the DB
+                    send_adminlogin(login_dictionary);
+                    return false;
+                }
+    </script>
+
+
+</html>

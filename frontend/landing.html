@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="landing.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>AHATX</title>
+</head>
+
+<!-- css -->
+<style>
+    .hide {
+        display: none;
+    }
+    .footer {
+   position: absolute;
+   height: 100px;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: black;
+   color: white;
+   text-align: center;
+    }
+
+</style>
+
+
+<body>
+    <center>
+        <h1>Affordable Housing ATX (AHATX)</h1>
+        <h3>Created By: Phillip Yang & Erik Hernandez </h3>
+    <div class="container" style="background-color:#ffffff">
+
+      <iframe width="360" height="200" src="https://www.youtube.com/embed/pzieIzGbQbw"
+      frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;
+      picture-in-picture" allowfullscreen></iframe>
+            <hr>
+            <button class="btn btn-lg btn-primary text-uppercase"
+                onclick="window.location.href = 'http://67.205.136.114/register.html';">Register Account</button>
+            <button class="btn btn-lg btn-primary text-uppercase"
+                onclick="window.location.href = 'http://67.205.136.114/index.html';">USER Sign in</button>
+            <button class="btn btn-lg btn-primary text-uppercase"
+                onclick="window.location.href = 'http://67.205.136.114/admin.html';">admin login</button>
+
+            <hr>
+            <div class="toggle-button">
+                <dt class="toggle-title">
+                    <h3>What is the AHATX?</h3>
+                </dt>
+                <dd class="toggle-answer hide">
+                    <p>It is Affordable housing search tool website. We show affordable
+                        rental properties based on your
+                        household income, household size and zip code where you want to live in the City of Austin.</p>
+                </dd>
+            </div>
+
+
+            <hr>
+            <div class="toggle-button">
+                <dt class="toggle-title">
+                    <h3>Do I qualify for income-restricted housing?</h3>
+                </dt>
+                <dd class="toggle-answer hide">
+                    <p>Home seekers must meet specific household income requirements to
+                        qualify to rent or purchase an
+                        income-restricted affordable unit. Most funding and incentive programs in Austin require that a
+                        households gross annual income is no more than 80 percent of the median family income.</p>
+                </dd>
+
+            </div>
+
+
+            <hr>
+            <div class="toggle-button">
+                <dt class="toggle-title">
+                    <h3>What features can I use?</h3>
+                </dt>
+                <dd class="toggle-answer hide">
+                    <ul>
+                        <p>
+                            <li><b>Search Tool</b>: Enter your current yearly household income and how many people reside in
+                                your household. </li>
+                            <li><b>Favorites</b>: You can save properties that you want to check later. </li>
+                            <li><b>Recommendations</b>: once you have at least one favorite, we are finding the housing you
+                                might like in different zip codes.</li>
+                        </p>
+                    </ul>
+                </dd>
+            </div>
+
+
+            <hr>
+            <div class="toggle-button">
+
+                <dt class="toggle-title">
+                    <h3>Is the housing list reliable and up to date ?</h3>
+                </dt>
+                <dd class="toggle-answer hide">
+                    <p>Yes, we got affordable housing data from austintexas.gov which is a
+                        reliable source. Web admin keeps
+                        updating housing lists when the property is updated from austintexas.gov</p>
+                </dd>
+            </div>
+
+
+            <hr>
+            <div class="toggle-button">
+                <dt class="toggle-title">
+                    <h3>What about afforable hosuing that has a waitlist?</h3>
+                </dt>
+                <dd class="toggle-answer hide">
+                    <p>Currently, we do not provide information for the waiting list for
+                        each property. For more accurate
+                        information, you need to contact the property manager to get on the waitlist. You can find
+                        the
+                        property website and phone number from our website.</p>
+                </dd>
+            </div>
+
+
+
+    </div>
+
+
+
+</center>
+
+</body>
+
+<div class= "container">
+</div>
+
+<script>
+
+    $('body').on('click', '.toggle-button dt', function (e) {
+        let descr = $(this).siblings('.toggle-answer');
+        $('.toggle-answer').not(descr).addClass('hide');
+        descr.toggleClass('hide');
+    });
+
+
+</script>
+
+</html>

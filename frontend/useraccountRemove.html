@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css" href="favoritestyle.css">
+<script type="text/javascript" src="utilities.js"></script>
+<p id="welcome">Welcome!</p>
+
+<body>
+    <center>
+        <h1>User Account List:</h1>
+        <h3>Submit any user account you want to remove from the user account list</h3>
+
+        <p id="demo"></p>
+    </center>
+    <button class="example_b" type="button" onclick="window.location.href = 'http://67.205.136.114/adminDash.html';">Back
+        to Dashboard</button>
+        <script>
+            var fullName = checkCookie("username");
+            console.log(fullName);
+            document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+        </script>
+        <script>
+            var fullName = get_cookie("username");
+            console.log(fullName);
+            document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+        </script>
+
+
+    <script>
+
+        function SendData2() {
+            var username = get_cookie("username");
+            // var username = "root";
+            //    var username = sessionStorage.getItem('username').slice(1,-1).toString();
+            var userList = document.getElementsByName('userAccount');
+            //  console.log(userList);
+            var userId = "";
+            for (var user of userList) {
+                if (user.checked == true) {
+                    userId += user.value + " ";
+                }
+            }
+            var jsonObject = { "userId": userId };
+            var favoSend = JSON.stringify(jsonObject);
+            console.log(favoSend);
+
+            var xht = new XMLHttpRequest();
+            xht.open("POST", 'api/userListRemove', true);
+            xht.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            xht.onload = function () {
+                if (xht.status >= 200 && xht.status < 300) {
+                    alert("success to update the user list");
+                    location.replace("http://67.205.136.114/adminDash.html");
+                } else {
+                    alert("there is error, try again");
+                }
+            }
+
+            xht.send(favoSend);
+            return false;
+        }   //end of SendData2() function
+
+        function SendData() {
+
+            var username = get_cookie("username");
+            //var username = sessionStorage.getItem('username').slice(1,-1).toString();
+
+            var jsonObject = { "username": username };
+            var usernameJson = JSON.stringify(jsonObject);
+            // console.log(usernameJson);
+
+            var xht = new XMLHttpRequest();
+            xht.open("POST", 'api/getUseraccountList', true);
+            xht.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            xht.onload = function () {
+                if (xht.status >= 200 && xht.status < 300) {
+                    //console.log(xht.response);
+                    //var serverResponse = JSON.stringify(xht.response);
+                    var serverResponse = xht.response;
+                    console.log(typeof serverResponse);
+                    console.log(serverResponse);
+                    console.log(serverResponse.length);
+
+                    if (serverResponse.length == 4) {
+                        alert("THERE IS NO USER ACCOUNT")
+                    } else {
+                        //trimming unnecessary characters and symbols
+
+                        //only for 's word - ex) Children's -> Childrens  
+                        serverResponse = serverResponse.replaceAll("Carol's", "Carols");
+                        serverResponse = serverResponse.replaceAll("Children's", "Childrens");
+                        serverResponse = serverResponse.replaceAll("Austin's", "Austins");
+
+
+                        serverResponse = serverResponse.replace(/\'/g, '\"');
+                        serverResponse = serverResponse.replaceAll('Project Name', 'ProjectName');
+                        serverResponse = serverResponse.replaceAll('Zip Code', 'ZipCode');
+                        serverResponse = serverResponse.replaceAll("ObjectId(", "");
+                        serverResponse = serverResponse.replaceAll("),", ",");
+                        serverResponse = serverResponse.replaceAll("\\", ""); // remove(\)
+                        serverResponse = serverResponse.slice(1, -1);
+                        console.log(serverResponse);
+
+
+                        //testing
+                        // console.log("Testing"); 
+                        // console.log(serverResponse.substring(66555,66569));
+
+
+                        var jsonDict = JSON.parse(serverResponse);
+                        var txt = "";
+                        txt += "<table border = '1'; style = 'background-color: gray'> <tr><th>username</th><th>password</th><th>Remove</th></tr>";
+
+                        for (i in jsonDict) {
+                            txt += "<tr><td>" + jsonDict[i].username + "</td><td>" + jsonDict[i].password + "</td><td><input type='checkbox' id= userAccount" + i + " name='userAccount' value= " + jsonDict[i]._id + "></td></tr>";
+                        };
+                        txt += "</table><br><br>";
+                        txt += " <button type='button' onClick='SendData2()'>Submit</button>";
+
+
+
+                        document.getElementById("demo").innerHTML = txt;
+
+
+                    }
+                } else {
+                    alert("there is error, try again");
+                }
+            }
+
+            xht.send(usernameJson);
+            return false;
+        }   //end of SendData() function
+
+
+
+
+        SendData();
+    </script>
+
+
+</body>
+
+</html>

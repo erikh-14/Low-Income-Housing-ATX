@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css" href="recommendationstyle.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="utilities.js"></script>
+<script type="text/javascript" src="utilities.js"></script>
+
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        /* body {
+            margin: 0;
+            padding: 0;
+        } */
+
+        /* #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        } */
+
+        .marker {
+            background-image: url('assets/mapbox-icon.png');
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+          font-size: 16 px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+</head>
+<p id="welcome">Welcome!</p>
+<script>
+    var fullName = checkCookie("username");
+    console.log(fullName);
+    document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+</script>
+<script>
+    var fullName = get_cookie("username");
+    console.log(fullName);
+    document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+</script>
+
+<body>
+    <center>
+        <h1>Recommendation Housing List:</h1>
+        <div>
+            <h3>Map: </h3>
+            <div id='map' style='width: 950px; height: 500px;'></div>
+            <!-- <div id='map'></div> -->
+        </div>
+
+        <p>Submit any house you want to save in the favorite list</p>
+
+        <p id="demo"></p>
+    </center>
+    <button class="example_b" type="button" onclick="window.location.href = 'http://67.205.136.114/maindash.html';">Back
+        to Dashboard</button>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid29uYm9rODMiLCJhIjoiY2tncXAwdWRlMDg3dDJycDJnMWI3MnAzeiJ9.shGU-CggkPO5VH3KayR6fQ';
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            //style: 'mapbox://styles/mapbox/light-v10', //stylesheet location
+            style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+            center: [-97.74, 30.26], //starting position [long, lat]
+            zoom: 9.5 //starting zoom level
+        });
+
+
+        function SendData2() {
+            var username = get_cookie("username");
+            //    var username = sessionStorage.getItem('username').slice(1,-1).toString();
+            var favorites = document.getElementsByName('housing');
+            //  console.log(favorites);
+            var favoritId = "";
+            for (var favorite of favorites) {
+                if (favorite.checked) {
+                    favoritId += favorite.value + " ";
+                }
+            }
+            var jsonObject = { "username": username, "favoriteId": favoritId };
+            var favoSend = JSON.stringify(jsonObject);
+            console.log(favoSend);
+
+            var xht = new XMLHttpRequest();
+            xht.open("POST", 'api/favorite', true);
+            xht.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            xht.onload = function () {
+                if (xht.status >= 200 && xht.status < 300) {
+                    alert("success to change the favorite list");
+                    location.replace("http://67.205.136.114/maindash.html");
+                } else {
+                    alert("there is error, try again");
+                }
+            }
+
+            xht.send(favoSend);
+            return false;
+        }   //end of SendData2() function
+
+
+        function SendData() {
+            var username = get_cookie("username");
+
+            var jsonObj = { "username": username };
+            var jsonSend = JSON.stringify(jsonObj);
+
+            var serverReq = new XMLHttpRequest();
+            serverReq.open("POST", 'api/recommendation', true);
+            serverReq.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            serverReq.onload = function () {
+                if (serverReq.status >= 200 && serverReq.status < 300) {
+                    var serverResponse = serverReq.response;
+                    console.log(serverResponse);
+                    if (serverResponse.length == 4) {
+                        alert("THERE IS NO FAVORITE HOUSE, YOU NEED AT LEAST ONE FAVORITE HOUSE TO GET RECOMMENDATION HOUSE LIST")
+                    } else {
+                        //trimming unnecessary characters and symbols
+                        serverResponse = serverResponse.replace(/\'/g, '\"');
+                        serverResponse = serverResponse.replaceAll('Project Name', 'ProjectName');
+                        serverResponse = serverResponse.replaceAll('Zip Code', 'ZipCode');
+                        serverResponse = serverResponse.replaceAll("ObjectId(", "");
+                        serverResponse = serverResponse.replaceAll("),", ",");
+                        serverResponse = serverResponse.slice(1, -1);
+                        console.log(serverResponse);
+
+                        var jsonDict = JSON.parse(serverResponse);
+                        var txt = "";
+                        txt += "<table border = '1'; style = 'background-color: gray'  > <tr><th>Housing_Name</th><th>Address</th><th>Zip_Code</th><th>Website</th><th>Phone</th><th>Favorite</th></tr>";
+
+                        for (i in jsonDict) {
+                            txt += "<tr><td>" + jsonDict[i].ProjectName + "</td><td>" + jsonDict[i].Address + "</td><td>" + jsonDict[i].ZipCode + "</td><td><a href=" + jsonDict[i].Website + ">" + jsonDict[i].Website + "</a></td><td>" + jsonDict[i].Phone + "</td><td><input type='checkbox' id= housing" + i + " name='housing' value= " + jsonDict[i]._id + "></td></tr>";
+                        };
+                        txt += "</table><br><br>";
+                        txt += " <button type='button' onClick='SendData2()'>Submit</button>";
+
+
+                        document.getElementById("demo").innerHTML = txt;
+
+                        var jsonArray = [];
+
+                        for (i in jsonDict) {
+                            var geojsonArr = {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [jsonDict[i].Longitude, jsonDict[i].Latitude] //[long, lat]
+                                },
+                                properties: {
+                                    title: jsonDict[i].ProjectName,
+                                    description: jsonDict[i].Address
+                                }
+                            };
+                            jsonArray.push(geojsonArr);
+                        };
+
+
+                        var geojson = {
+                            type: 'FeatureCollection',
+                            features: jsonArray
+                        };
+
+                        console.log("geojson: ");
+                        console.log(geojson.features)
+
+                        // add markers to map
+                        geojson.features.forEach(function (marker) {
+
+                            // create a HTML element for each feature
+                            var el = document.createElement('div');
+                            el.className = 'marker';
+
+                            // make a marker for each feature and add to the map
+                            new mapboxgl.Marker(el)
+                                .setLngLat(marker.geometry.coordinates)
+                                .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                                    .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+                                .addTo(map);
+                        });
+
+                    }
+                } else {
+                    alert("There is error, try again");
+                }
+            }
+
+            serverReq.send(jsonSend);
+            return false;
+        }
+
+        SendData()
+    </script>
+
+</body>
+
+</html>

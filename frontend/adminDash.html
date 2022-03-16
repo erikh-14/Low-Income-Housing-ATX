@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<!-- Sets the Source for the Javascript to run in the HTML file -->
+
+
+<html lang="en">
+
+
+<head>
+  <title>
+    User Landing Page
+  </title>
+  <p id="welcome">Welcome!</p>
+  <script src="utilities.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- References the Stylesheet for the CSS on the Login Page -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+    integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <!-- Button Allows the Logout to end the Session and Return to the login page -->
+    <button class="example_c" onclick="window.location.href = 'http://67.205.136.114/admin.html';">Logout</button>
+
+  <link rel="stylesheet" type="text/css" href="maindashstyle.css">
+</head>
+<script>
+  var fullName = checkCookie("username");
+  console.log(fullName);
+  document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+</script>
+
+
+<body>
+  <!-- Creates a Section for the Info Below to be held in  -->
+  <div class="mainbody">
+    <center>
+
+      <h3>Admin Dashboard</h3>
+
+      <!-- Welcomes the user with their first and last name-->
+      <!-- Feel free to move this-->
+      <p style="font-size:38px; font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif;" id="welcome">Welcome!</p>
+  </div>
+
+    <center>
+      <div class="button_cont" align="center">
+        <br></br>
+        <center>
+          <!-- Each button will send to the Desired page. -->
+
+          <!-- <button class="example_b" onclick="window.location.href = 'http://67.205.136.114/useraccountEdit.html';">USER ACCOUNT EDIT</button> -->
+
+          <button class="example_b" onclick="window.location.href = 'http://67.205.136.114/useraccountRemove.html';">USER ACCOUNT REMOVE</button>
+
+          <button class="example_b" onclick="window.location.href = 'http://67.205.136.114/housingAdd.html';">HOUSING ADD</button>
+
+          <button class="example_b" onclick="window.location.href = 'http://67.205.136.114/housingRemove.html';">HOUSING REMOVE</button>
+
+          <!-- <button class="example_b" onclick="window.location.href = 'http://67.205.136.114/housingEdit.html';">HOUSING EDIT</button> -->
+
+
+      </div>
+
+      <br></br>
+
+
+
+
+
+      <br></br>
+      <div class="wrapper">
+      <br><small>
+        <span style="font-family: Avant Garde,Avantgarde,Century Gothic,CenturyGothic,AppleGothic,sans-serif; font-size: 23px";>
+          <footer class="page-footer">Website designed by Erik Hernandez, and Phillip Yang<br><br>
+          </footer>
+
+  <br><br><br>
+  <p id="server_status"></p>
+  </small>
+
+
+
+</center>
+
+</div>
+
+    </center>
+
+
+
+
+  </div>
+
+
+  <script>
+        var fullName = get_cookie("username");
+        console.log(fullName);
+        document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+  </script>
+</body>
+
+</html>

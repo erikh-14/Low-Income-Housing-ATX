@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css" href="response.css">
+<script src="utilities.js"></script>
+<script type="text/javascript" src="utilities.js"></script>
+
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        /* body {
+            margin: 0;
+            padding: 0;
+        } */
+
+        /* #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        } */
+
+        .marker {
+            background-image: url('assets/mapbox-icon.png');
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+            font-size: 16 px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+</head>
+<p id="welcome">Welcome!</p>
+<script>
+    var fullName = checkCookie("username");
+    console.log(fullName);
+    document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+</script>
+<script>
+    var fullName = get_cookie("username");
+    console.log(fullName);
+    document.getElementById("welcome").innerHTML = "Welcome " + fullName + "!";
+</script>
+
+<body>
+
+
+
+    <div>
+
+        <center>
+            <h1>Housing List</h1>
+
+            <div>
+                <h3>Map: </h3>
+                <div id='map' style='width: 950px; height: 500px;'></div>
+                <!-- <div id='map'></div> -->
+            </div>
+            <h3> Result of housing list: </h3>
+            <h4>Submit the favorite house you like </h4>
+
+            <p id="resultTable"></p>
+
+        </center>
+    </div>
+
+
+
+    <script>
+        function SendData() {
+            var username = get_cookie("username");
+            //    var username = sessionStorage.getItem('username').slice(1,-1).toString();
+            var favorites = document.getElementsByName('housing');
+            //  console.log(favorites);
+            var favoritId = "";
+            for (var favorite of favorites) {
+                if (favorite.checked) {
+                    favoritId += favorite.value + " ";
+                }
+            }
+            var jsonObject = { "username": username, "favoriteId": favoritId };
+            var favoSend = JSON.stringify(jsonObject);
+            console.log(favoSend);
+
+            var xht = new XMLHttpRequest();
+            xht.open("POST", 'api/favorite', true);
+            xht.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            xht.onload = function () {
+                if (xht.status >= 200 && xht.status < 300) {
+                    alert("success to change the favorite list");
+                    location.replace("http://67.205.136.114/maindash.html");
+                } else {
+                    alert("there is error, try again");
+                }
+            }
+
+            xht.send(favoSend);
+            return false;
+        }   //end of SendData() function
+
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid29uYm9rODMiLCJhIjoiY2tncXAwdWRlMDg3dDJycDJnMWI3MnAzeiJ9.shGU-CggkPO5VH3KayR6fQ';
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            //style: 'mapbox://styles/mapbox/light-v10', //stylesheet location
+            style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+            center: [-97.74, 30.26], //starting position [long, lat]
+            zoom: 9.5 //starting zoom level
+        });
+
+        var response = sessionStorage.getItem("response");
+
+        //trimming unnecessary characters and symbols
+        response = response.replace(/\'/g, '\"');
+        response = response.replaceAll('Project Name', 'ProjectName');
+        response = response.replaceAll("ObjectId(", "");
+        response = response.replaceAll("),", ",");
+        response = response.slice(1, -1);
+
+        console.log(response);
+
+        var jsonDict = JSON.parse(response);
+        var txt = ""
+
+        txt += "<table border = '1'; style = 'background-color: gray'> <tr><th>Housing_Name</th><th>Address</th><th>Website</th><th>Phone</th><th>Favorite</th></tr>";
+
+        for (i in jsonDict) {
+            txt += "<tr><td>" + jsonDict[i].ProjectName + "</td><td>" + jsonDict[i].Address + "</td><td><a href=" + jsonDict[i].Website + ">" + jsonDict[i].Website + "</a></td><td>" + jsonDict[i].Phone + "</td><td><input type='checkbox' id= housing" + i + " name='housing' value= " + jsonDict[i]._id + "></td></tr>";
+        };
+        txt += "</table><br><br>";
+
+        txt += " <button type='button' onClick='SendData()'>Submit</button>";
+
+
+        document.getElementById("resultTable").innerHTML = txt;
+
+
+
+
+        var jsonArray = [];
+
+        for (i in jsonDict) {
+            var geojsonArr = {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [jsonDict[i].Longitude, jsonDict[i].Latitude] //[long, lat]
+                },
+                properties: {
+                    title: jsonDict[i].ProjectName,
+                    description: jsonDict[i].Address
+                }
+            };
+            jsonArray.push(geojsonArr);
+        };
+
+
+        var geojson = {
+            type: 'FeatureCollection',
+            features: jsonArray
+        };
+
+        console.log("geojson: ");
+        console.log(geojson.features)
+
+        // add markers to map
+        geojson.features.forEach(function (marker) {
+
+            // create a HTML element for each feature
+            var el = document.createElement('div');
+            el.className = 'marker';
+
+            // make a marker for each feature and add to the map
+            new mapboxgl.Marker(el)
+                .setLngLat(marker.geometry.coordinates)
+                .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                    .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+                .addTo(map);
+        });
+
+    </script>
+
+</body>
+
+</html>
