@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h1>Housing List</h1>
+
+    <p>Result page</p>
+    <p>Submit the favorite</p>
+
+
+    <!-- https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_input_type_checkbox
+
+    https://www.w3schools.com/html/tryit.asp?filename=tryhtml_lists_unordered
+
+    https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_li_get
+
+    https://www.w3schools.com/js/tryit.asp?filename=tryjson_html_table -->
+
+    <!-- <form name="favoriteForm"> -->
+        <p id="demo"></p>
+
+    <!-- </form> -->
+
+
+
+
+    <script>
+
+
+        function SendData(){
+            var username = "root";
+        //    var username = sessionStorage.getItem('username').slice(1,-1).toString();
+            var favorites = document.getElementsByName('housing');
+          //  console.log(favorites);
+            var favoritId = "";
+            for ( var favorite of favorites){
+                if (favorite.checked){
+                    favoritId += favorite.value + " "; 
+                }
+            }
+            var jsonObject = {"username" : username, "favoriteId" : favoritId };
+            var favoSend = JSON.stringify(jsonObject);
+            console.log(favoSend);
+
+            var xht = new XMLHttpRequest();
+            xht.open("POST", 'api/favorite', true);
+            xht.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            xht.onload = function () {
+                if(xht.status >= 200 && xht.status < 300){
+                    alert("success to change the favorite list");
+                    location.replace("http://67.205.136.114/maindash.html");
+                } else {
+                    alert ("there is error, try again");
+                }
+            }
+
+            xht.send(favoSend);
+            return false; 
+        }   //end of SendData() function 
+
+
+
+
+
+
+
+
+
+
+        
+        var txt = "";
+
+        //myresponse = JSON.parse(this.responseText)
+
+        //senioor housing
+        //var response = "[{'_id': ObjectId('5f83809fb722375911905c3b'), 'Project Name': 'Harris Branch Senior Apartments', 'Address': '12433 Dessau Road', 'Zip Code': 78754, 'Total Units': 216, 'Total Affordable Units': 216, 'Unit Type': 'Multifamily', 'Housing Type': 'Senior Housing', 'Status': 'Project Completed', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': 'Capstone Management', 'Phone': '877-228-2573', 'Website': 'https://harrisbranchseniors.com/', 'Longitude': -97.64488191, 'Latitude': 30.38880659, 'Location': '(30.3888065941242, -97.6448819144268)'}]";
+
+
+        //Residential housing
+        var response = "[{'_id': ObjectId('5f83809fb722375911905bb3'), 'Project Name': 'The Reserve at Walnut Creek (fka Springdale Apartments)', 'Address': '8038 Exchange Drive', 'Zip Code': 78754, 'Total Units': 98, 'Total Affordable Units': 98, 'Unit Type': 'Multifamily', 'Housing Type': 'Residential Housing', 'Status': 'Project Completed', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': 'Roscoe Properties', 'Phone': '512-926-6565', 'Website': 'https://www.reserveatwalnutcreek.com/', 'Longitude': -97.664626, 'Latitude': 30.332583, 'Location': '(30.332583, -97.664626)'}, {'_id': ObjectId('5f83809fb722375911905c2b'), 'Project Name': 'Harris Ridge Apartments', 'Address': '1501 E Howard Lane', 'Zip Code': 78754, 'Total Units': 324, 'Total Affordable Units': 324, 'Unit Type': 'Multifamily', 'Housing Type': 'Residential Housing', 'Status': 'Building Permit Issued', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': 'NRP Group', 'Phone': '844-678-8832', 'Website': 'https://www.bridgeharrisridge.com/', 'Longitude': -97.643651, 'Latitude': 30.406351, 'Location': '(30.406351, -97.643651)'}, {'_id': ObjectId('5f83809fb722375911905c4a'), 'Project Name': 'Bridge at Cameron', 'Address': '9201 Cameron Road', 'Zip Code': 78754, 'Total Units': 263, 'Total Affordable Units': 263, 'Unit Type': 'Multifamily', 'Housing Type': 'Residential Housing', 'Status': 'Building Permit Issued', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': '', 'Phone': '', 'Website': '', 'Longitude': -97.67552, 'Latitude': 30.348196, 'Location': '(30.348196, -97.67552)'}]";
+
+        console.log(typeof response);
+        //trimming unnecessary characters and symbols 
+        response = response.replace(/\'/g, '\"');
+        response = response.replaceAll('Project Name', 'ProjectName');
+        response = response.replaceAll("ObjectId(", "");
+        response = response.replaceAll("),", ",");
+        // response = response.replace("[","");
+        // response = response.replace("]","");
+
+        console.log(response);
+        var jsonDict = JSON.parse(response);
+
+        txt += "<table border = '1'> <tr><th>Housing_Name</th><th>Address</th><th>Website</th><th>Phone</th><th>Favorite</th></tr>";
+
+        for (i in jsonDict) {
+            txt += "<tr><td>" + jsonDict[i].ProjectName + "</td><td>" + jsonDict[i].Address + "</td><td><a href=" + jsonDict[i].Website + ">" + jsonDict[i].Website + "</a></td><td>" + jsonDict[i].Phone + "</td><td><input type='checkbox' id= housing" + i + " name='housing' value= "+ jsonDict[i]._id+"></td></tr>";
+        };
+        txt += "</table><br><br>";
+        txt += " <button type='button' onClick='SendData()'>Submit</button>";
+
+
+        document.getElementById("demo").innerHTML = txt;
+
+
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>

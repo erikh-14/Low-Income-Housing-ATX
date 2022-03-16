@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .marker {
+            background-image: url('mapbox-icon.png');
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id='map' style='width: 600px; height: 500px;'></div>
+    <!-- <div id='map'></div> -->
+
+    <script>
+
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid29uYm9rODMiLCJhIjoiY2tncXAwdWRlMDg3dDJycDJnMWI3MnAzeiJ9.shGU-CggkPO5VH3KayR6fQ';
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            //style: 'mapbox://styles/mapbox/light-v10', //stylesheet location
+            style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+            center: [-97.74, 30.26], //starting position [long, lat]
+            zoom: 9 //starting zoom level
+        });
+
+
+        //senioor housing
+        //var response = "[{'_id': ObjectId('5f83809fb722375911905c3b'), 'Project Name': 'Harris Branch Senior Apartments', 'Address': '12433 Dessau Road', 'Zip Code': 78754, 'Total Units': 216, 'Total Affordable Units': 216, 'Unit Type': 'Multifamily', 'Housing Type': 'Senior Housing', 'Status': 'Project Completed', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': 'Capstone Management', 'Phone': '877-228-2573', 'Website': 'https://harrisbranchseniors.com/', 'Longitude': -97.64488191, 'Latitude': 30.38880659, 'Location': '(30.3888065941242, -97.6448819144268)'}]";
+
+
+        //Residential housing
+        var response = "[{'_id': ObjectId('5f83809fb722375911905bb3'), 'Project Name': 'The Reserve at Walnut Creek (fka Springdale Apartments)', 'Address': '8038 Exchange Drive', 'Zip Code': 78754, 'Total Units': 98, 'Total Affordable Units': 98, 'Unit Type': 'Multifamily', 'Housing Type': 'Residential Housing', 'Status': 'Project Completed', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': 'Roscoe Properties', 'Phone': '512-926-6565', 'Website': 'https://www.reserveatwalnutcreek.com/', 'Longitude': -97.664626, 'Latitude': 30.332583, 'Location': '(30.332583, -97.664626)'}, {'_id': ObjectId('5f83809fb722375911905c2b'), 'Project Name': 'Harris Ridge Apartments', 'Address': '1501 E Howard Lane', 'Zip Code': 78754, 'Total Units': 324, 'Total Affordable Units': 324, 'Unit Type': 'Multifamily', 'Housing Type': 'Residential Housing', 'Status': 'Building Permit Issued', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': 'NRP Group', 'Phone': '844-678-8832', 'Website': 'https://www.bridgeharrisridge.com/', 'Longitude': -97.643651, 'Latitude': 30.406351, 'Location': '(30.406351, -97.643651)'}, {'_id': ObjectId('5f83809fb722375911905c4a'), 'Project Name': 'Bridge at Cameron', 'Address': '9201 Cameron Road', 'Zip Code': 78754, 'Total Units': 263, 'Total Affordable Units': 263, 'Unit Type': 'Multifamily', 'Housing Type': 'Residential Housing', 'Status': 'Building Permit Issued', '1 Person Household': 36120, '2 Person Household': 41280, '3 Person Household': 46440, '4 Person Household': 51600, '5 Person Household': 55740, 'Property Management Company': '', 'Phone': '', 'Website': '', 'Longitude': -97.67552, 'Latitude': 30.348196, 'Location': '(30.348196, -97.67552)'}]";
+
+
+        //trimming unnecessary characters and symbols 
+        response = response.replace(/\'/g, '\"');
+        response = response.replaceAll('Project Name', 'ProjectName');
+        response = response.replaceAll("ObjectId(", "");
+        response = response.replaceAll("),", ",");
+        // response = response.replace("[","");
+        // response = response.replace("]","");
+
+        console.log(response);
+
+
+        var jsonDict = JSON.parse(response);
+
+        var jsonArray = [];
+
+        for (i in jsonDict) {
+            var geojsonArr = {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [jsonDict[i].Longitude, jsonDict[i].Latitude] //[long, lat]
+                },
+                properties: {
+                    title: jsonDict[i].ProjectName,
+                    description: jsonDict[i].Address
+                }
+            };
+            jsonArray.push(geojsonArr);
+        };
+
+
+        var geojson = {
+            type: 'FeatureCollection',
+            features: jsonArray
+        };
+
+        console.log("geojson: ");
+        console.log(geojson.features)
+
+        // add markers to map
+        geojson.features.forEach(function (marker) {
+
+            // create a HTML element for each feature
+            var el = document.createElement('div');
+            el.className = 'marker';
+
+            // make a marker for each feature and add to the map
+            new mapboxgl.Marker(el)
+                .setLngLat(marker.geometry.coordinates)
+                .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                    .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+                .addTo(map);
+        });
+
+    </script>
+
+</body>
+
+</html>
